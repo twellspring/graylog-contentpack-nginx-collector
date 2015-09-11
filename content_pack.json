@@ -1,0 +1,110 @@
+{
+  "id" : null,
+  "name" : "nginx via graylog collector",
+  "description" : "This content pack creates a GELF collector for use by the graylog-collector.  Extractors are applied to all messages to extract nginx access log fields and error log severity.  Graylog timestamp is set to the timestamp in the access/error log.  Extractors look for combined log format, so other applications using combined log format should also be matched by these extractors ( apache, node.js/morgan).",
+  "category" : "Web Servers",
+  "inputs" : [ {
+    "title" : "GELF TCP 12201  graylog-collector ",
+    "configuration" : {
+      "port" : 12201,
+      "override_source" : "",
+      "bind_address" : "192.168.3.22",
+      "tls_cert_file" : "",
+      "use_null_delimiter" : true,
+      "recv_buffer_size" : 1048576,
+      "tls_key_password" : "",
+      "tls_key_file" : "",
+      "max_message_size" : 2097152
+    },
+    "type" : "org.graylog2.inputs.gelf.tcp.GELFTCPInput",
+    "global" : false,
+    "extractors" : [ {
+      "title" : "HTTP Extract IPV4 from IPV6",
+      "type" : "GROK",
+      "configuration" : {
+        "grok_pattern" : "%{IPV4:http_ipv4}"
+      },
+      "converters" : [ ],
+      "order" : 0,
+      "cursor_strategy" : "COPY",
+      "target_field" : "http_client_ip",
+      "source_field" : "http_client_ip",
+      "condition_type" : "STRING",
+      "condition_value" : "::ffff"
+    }, {
+      "title" : "HTTP Combined Log",
+      "type" : "GROK",
+      "configuration" : {
+        "grok_pattern" : "%{IP:http_client_ip} %{USER:http_ident} %{USER:http_auth} \\[%{HTTPDATE:http_timestamp}\\] \\\"%{WORD:http_method} %{URIPATH:http_request}(?:%{URIPARAM:HTTP_parameters})? HTTP/%{NUMBER:http_version}\\\" %{NUMBER:http_response;short} (%{NUMBER:http_size;int}|-) *%{QUOTEDSTRING:http_referer} %{QUOTEDSTRING:http_user_agent}"
+      },
+      "converters" : [ ],
+      "order" : 0,
+      "cursor_strategy" : "COPY",
+      "target_field" : "message",
+      "source_field" : "message",
+      "condition_type" : "STRING",
+      "condition_value" : "HTTP"
+    }, {
+      "title" : "HTTP Update Timestamp",
+      "type" : "COPY_INPUT",
+      "configuration" : { },
+      "converters" : [ {
+        "type" : "DATE",
+        "configuration" : {
+          "date_format" : "dd/MMM/yyyy:HH:mm:ss Z"
+        }
+      } ],
+      "order" : 0,
+      "cursor_strategy" : "COPY",
+      "target_field" : "timestamp",
+      "source_field" : "http_timestamp",
+      "condition_type" : "NONE",
+      "condition_value" : ""
+    }, {
+      "title" : "Nginx Error Log",
+      "type" : "GROK",
+      "configuration" : {
+        "grok_pattern" : "%{NginxDATE:nginx_timestamp} \\[%{WORD:severity}"
+      },
+      "converters" : [ ],
+      "order" : 0,
+      "cursor_strategy" : "COPY",
+      "target_field" : "message",
+      "source_field" : "message",
+      "condition_type" : "NONE",
+      "condition_value" : ""
+    }, {
+      "title" : "Nginx Error update timestamp",
+      "type" : "COPY_INPUT",
+      "configuration" : { },
+      "converters" : [ {
+        "type" : "DATE",
+        "configuration" : {
+          "date_format" : " yyyy/MM/dd HH:mm:ss"
+        }
+      } ],
+      "order" : 0,
+      "cursor_strategy" : "COPY",
+      "target_field" : "timestamp",
+      "source_field" : "nginx_timestamp",
+      "condition_type" : "NONE",
+      "condition_value" : ""
+    } ],
+    "static_fields" : { }
+  } ],
+  "streams" : [ {
+    "id" : "55dcef5599323c0c7567675c",
+    "title" : "Web",
+    "description" : "HTTP access Logs",
+    "disabled" : false,
+    "outputs" : [ ],
+    "stream_rules" : [ {
+      "type" : "PRESENCE",
+      "field" : "http_request",
+      "value" : "",
+      "inverted" : false
+    } ]
+  } ],
+  "outputs" : [ ],
+  "dashboards" : [ ]
+}

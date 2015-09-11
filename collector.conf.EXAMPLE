@@ -1,0 +1,35 @@
+// URL to REST API of Graylog server this collector registers at
+server-url = "http://logs.riskalyze.com:12900"
+
+// Enable registration with the Graylog server. (enabled by default)
+//enable-registration = true
+
+// The id used to identify this collector. Can be either a string which is used as id,
+// or the location of a file if prefixed with "file:".
+collector-id = "my_server_name"
+
+inputs {
+
+  node {
+    type = "file"
+    path-glob-root = "/var/log/node"
+    path-glob-pattern = "*out-*.log"
+    charset = "utf-8"
+    content-splitter = "newline"
+    reader-interval = "2s"
+    message-fields = {
+      "source_type" = "node_out"
+    }
+  }
+
+}
+
+outputs {
+
+  // GELF output to send messages to a Graylog server. Usually only type, host and port are needed.
+  // The other options are for TLS support and to fine-tune the GELF client library.
+  gelf-tcp {
+    type = "gelf"
+    host = "my_graylog_server"
+    port = 12201
+  }
