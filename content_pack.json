@@ -1,7 +1,7 @@
 {
   "id" : null,
   "name" : "nginx via graylog collector",
-  "description" : "This content pack creates a GELF collector for use by the graylog-collector.  Extractors are applied to all messages to extract nginx access log fields and error log severity.  Graylog timestamp is set to the timestamp in the access/error log.  Extractors look for combined log format, so other applications using combined log format should also be matched by these extractors ( apache, node.js/morgan).",
+  "description" : "This content pack creates a GELF input for use by the graylog-collector.  Extractors are applied to all received messages to extract nginx access log fields and error log severity.  Graylog timestamp is set to the timestamp in the access/error log.  Extractors look for combined log format, so other applications using combined log format should also be matched by these extractors ( apache, node.js/morgan).",
   "category" : "Web Servers",
   "inputs" : [ {
     "title" : "GELF TCP 12201  graylog-collector ",
