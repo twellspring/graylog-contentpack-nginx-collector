@@ -1,5 +1,5 @@
 // URL to REST API of Graylog server this collector registers at
-server-url = "http://logs.riskalyze.com:12900"
+server-url = "http://my_graylog_server:12900"
 
 // Enable registration with the Graylog server. (enabled by default)
 //enable-registration = true
