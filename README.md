@@ -5,6 +5,6 @@ This content pack creates a GELF Input for use by the graylog-collector.  Extrac
 The graylog collector needs to be installed on your web servers.  See collector.conf.EXAMPLE for a sample configuration to collect nginx logs from /var/log/nginx and send them to the GELF input on graylog server.
 
 
-![Screenshots](images/screenshot_gelf_12201_collector.png)
+![Screenshots](https://github.com/twellspring/graylog-contentpack-nginx-collector/blob/master/images/screenshot_gelf_12201_collector.png)
 
-![Screenshots](images/screenshot_extractors.png)
+![Screenshots](https://github.com/twellspring/graylog-contentpack-nginx-collector/blob/master/images/screenshot_extractors.png)
